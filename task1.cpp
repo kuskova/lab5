@@ -10,7 +10,37 @@ struct item{
     item* prev;
 };
 
-inline bool solve1(char s[]){
+inline bool solve1(char s[])
+{
+	char* ctec = new char [strlen(s)];
+	int finish = -1;
+	for (int k = 0; k < strlen(s); k++)
+	{
+		char simvol = *( s + k );
+		if (simvol == '(' || simvol == '{' || simvol == '[')
+		{
+			finish++;
+			ctec[finish] = simvol;
+		}
+		else
+		{
+			int skoba = static_cast<int>(*( s + k ));
+			int zadnyaa = static_cast<int>(*( ctec + finish ));
+			if (skoba - zadnyaa <= 2 && skoba - zadnyaa > 0)
+			{
+				finish--;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	}
+	if (finish == -1)
+	{
+		return true;
+	}
+	return false;
 }
 
 inline bool solve2(char s[]){
@@ -45,50 +75,6 @@ inline void assert(char s[], bool ans){
         puts("WA");
 }
 
-bool testskobki(char string[])
-{
-	char* ctec = new char [strlen(string)];
-	int finish = -1;
-	for (int k = 0; k < strlen(string); k++)
-	{
-		char simvol = *( string + k );
-		if (simvol == '(' || simvol == '{' || simvol == '[')
-		{
-			finish++;
-			ctec[finish] = simvol;
-		}
-		else
-		{
-			int skoba = static_cast<int>(*( string + k ));
-			int zadnyaa = static_cast<int>(*( ctec + finish ));
-			if (skoba - zadnyaa <= 2 && skoba - zadnyaa > 0)
-			{
-				finish--;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	}
-	if (finish == -1)
-	{
-		return true;
-	}
-	return false;
-}
-
-void assert1(bool test, char string[])
-{
-	if (test == testskobki(string))
-	{
-		cout << "OK" << endl;
-	}
-	else
-	{
-		cout << "FAIL" << endl;
-	}
-}
 int main(){
     char s1[] = "(()){[][]}";
     char s2[] = "([]]";
@@ -96,8 +82,8 @@ int main(){
     assert(s1, true);
     assert(s2, false);
     char a[5] = "(())";
-	assert1(true,a);
-	char b[100] = "(()){[{]]}";
-	assert1(false,b);
+    assert(a,true);
+    char b[100] = "(()){[{]]}";
+    assert(b,false);
     return 0;
 }
