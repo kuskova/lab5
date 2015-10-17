@@ -1,0 +1,181 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+int operations(char string[])
+{
+	char stackdigs[100] = "";
+	char* stackop = new char [strlen(string)];
+	int finish = -1, finishop = -1;
+	for (int i = 0;i < strlen(string);i++)
+	{
+		if (isdigit(*( string + i ))) //пока это числа мы записываем их в строку другого char-массива 
+		{
+			finish++;
+			*( stackdigs + finish ) = *( string + i );
+		}
+		else if (*( string + i ) != ')') //пока мы не встретили ')',то мы заносим + - * / в другой char-массив
+		{
+			if (( *( string + i ) == '*' || *( string + i ) == '/' ) && isdigit(*( string + i + 1 ))) // описание приоритета * / между чиcлами и )* )/
+			{
+				finish++;
+				*( stackdigs + finish ) = '.';
+				int k = i;
+				while (isdigit(*( string + k + 1 )))
+				{
+					finish++;
+					*( stackdigs + finish ) = *( string + k + 1 );
+					k++;
+				}
+				finish++;
+				*( stackdigs + finish ) = *( string + i );
+				i = k;
+			}
+			else if (*( string + i + 1 ) == '-' && *( string + i ) == '(')
+			{
+				int k = i;
+				while (isdigit(*( string + k + 2 )))
+				{
+					k++;
+				}
+				if (*( string + k + 2 ) == ')')// специально для (-х)
+				{
+					finishop++;
+					*( stackop + finishop ) = '(';
+					finish++;
+					*( stackdigs + finish ) = '0';
+					finish++;
+					*( stackdigs + finish ) = '.';
+				}
+			}
+			else // заносим + - ( и отделяем числа '.'
+			{
+				finishop++;
+				*( stackop + finishop ) = *( string + i );
+				if (*( stackdigs + finish ) != '.')
+					finish++;
+				*( stackdigs + finish ) = '.';
+			}
+		}
+
+		else
+		{
+			while (*( stackop + finishop ) != '(')
+			{
+				finish++;
+				*( stackdigs + finish ) = *( stackop + finishop );
+				finishop--;
+			}
+			finishop--;
+			if (*( stackop + finishop ) == '*' || *( stackop + finishop ) == '/')
+			{
+				finish++;
+				*( stackdigs + finish ) = *( stackop + finishop );
+				finishop--;
+			}
+		}
+		if (i == strlen(string) - 1)// вывод оставшихся символов + -
+		{
+			int konec_yeah = finishop;
+			for (int k = 0;k <= konec_yeah;k++)
+			{
+				if (*( stackop + k ) == '-' && *( stackop + k + 1 ) == '-')
+				{
+					*( stackop + k + 1 ) = '+';
+					k++;
+				}
+				else if (*( stackop + k ) == '-' && *( stackop + k + 1 ) == '+')
+				{
+					*( stackop + k + 1 ) = '-';
+					k++;
+				}
+			}
+			for (int j = finishop + 1;j != 0;j--)
+			{
+				finish++;
+				*( stackdigs + finish ) = *( stackop + finishop );
+				finishop--;
+			}
+		}
+	}
+	int digs[100] = {0};//начало операций
+	int number = 0;
+	int finish2 = -1;
+	for (int i = 0;i < strlen(stackdigs);i++)
+	{
+		if (isdigit(*( stackdigs + i )))
+		{
+			number = number * 10 + ( *( stackdigs + i ) - 48 );
+		}
+		else if (*( stackdigs + i ) == '.' && isdigit(*( stackdigs + i - 1 )))
+		{
+			finish2++;
+			digs[finish2] = number;
+			number = 0;
+		}
+
+		if (*( stackdigs + i ) == '+' || *( stackdigs + i ) == '/' || *( stackdigs + i ) == '*' || *( stackdigs + i ) == '-')
+		{
+			switch (*( stackdigs + i ))
+			{
+			case '+':
+				if (number != 0)
+				{
+					digs[finish2] = digs[finish2] + number;
+					number = 0;
+				}
+				else
+				{
+					digs[finish2 - 1] = digs[finish2] + digs[finish2 - 1];
+					digs[finish2] = 0;
+					finish2--;
+				}
+				break;
+			case '-':
+				if (number != 0)
+				{
+					digs[finish2] = digs[finish2] - number;
+					number = 0;
+				}
+				else
+				{
+					digs[finish2 - 1] = digs[finish2 - 1] - digs[finish2];
+					digs[finish2] = 0;
+					finish2--;
+				}
+				break;
+			case '*':
+				if (number != 0)
+				{
+					digs[finish2] = digs[finish2] * number;
+					number = 0;
+				}
+				else
+				{
+					digs[finish2 - 1] = digs[finish2] * digs[finish2 - 1];
+					digs[finish2] = 0;
+					finish2--;
+				}
+				break;
+			case '/':
+				if (number != 0)
+				{
+					digs[finish2] = digs[finish2] / number;
+					number = 0;
+				}
+				else
+				{
+					digs[finish2 - 1] = digs[finish2 - 1] / digs[finish2];
+					digs[finish2] = 0;
+					finish2--;
+				}
+				break;
+			}
+		}
+	}
+	return digs[0];
+}
+
+int main()
+{
+}
