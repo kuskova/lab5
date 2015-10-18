@@ -60,6 +60,20 @@ int operations(char string[])
 
 		else
 		{
+			int z = finishop;
+				while (*( stackop + z ) != '(')
+				{
+					if (*( stackop + z ) == '-' && *( stackop + z - 1 ) == '-')
+					{
+						*( stackop + z ) = '+';
+					}
+					else if (*( stackop + z ) == '+' && *( stackop + z - 1 ) == '-')
+					{
+						*( stackop + z ) = '-';
+						z--;
+					}
+					z--;
+				}
 			while (*( stackop + finishop ) != '(')
 			{
 				finish++;
@@ -76,18 +90,29 @@ int operations(char string[])
 		}
 		if (i == strlen(string) - 1)// вывод оставшихся символов + -
 		{
-			int konec_yeah = finishop;
-			for (int k = 0;k <= konec_yeah;k++)
+			for (int konec_yeah = finishop;konec_yeah>=0;konec_yeah--)
 			{
-				if (*( stackop + k ) == '-' && *( stackop + k + 1 ) == '-')
+				if (*( stackop + konec_yeah ) == '-' && *( stackop + konec_yeah +1) == '-')
 				{
-					*( stackop + k + 1 ) = '+';
-					k++;
+					*( stackop + konec_yeah +1) = '+';
+				   while (*( stackop + konec_yeah )!='+' && konec_yeah>=0)
+				   {
+					   *( stackop + konec_yeah ) = '+';
+					   konec_yeah--;
+				   }
+				   *( stackop + konec_yeah +1) = '-';
+				   konec_yeah++;
 				}
-				else if (*( stackop + k ) == '-' && *( stackop + k + 1 ) == '+')
+				else if (*( stackop + konec_yeah ) == '-' && *( stackop + konec_yeah +1) == '+')
 				{
-					*( stackop + k + 1 ) = '-';
-					k++;
+					*( stackop + konec_yeah+1 ) = '-';
+					while (*( stackop + konec_yeah )!='+' && konec_yeah>=0)
+				   {
+					   *( stackop + konec_yeah ) = '+';
+					   konec_yeah--;
+				   }
+				   *( stackop + konec_yeah +1) = '-';
+				   konec_yeah++;
 				}
 			}
 			for (int j = finishop + 1;j != 0;j--)
