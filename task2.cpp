@@ -31,6 +31,23 @@ inline int calc(char s[]){
     return num.top();
 }
 
+void assert(char s[], int right)
+{
+	if (calc(s)==right)
+	{
+		cout << "OK" << endl;
+	}
+	else
+	{
+		cout << "FAIL" << endl;
+	}
+}
 int main(){
+	char s[100]="max(min(max(2,3),min(6,5)),min(9,max(3,5)))";
+	assert(s,5);
+	char q[100]="max(4, min(3,5))";
+	assert(q,4);
+	char z[100]="min(min(3,5), max(2,max(3,4)))";
+	assert(z,3);
     return 0;
 }
