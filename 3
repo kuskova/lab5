@@ -48,6 +48,15 @@ int operations(char string[])
 					*( stackdigs + finish ) = '.';
 				}
 			}
+			else if (*( string + i ) == '-' && i==0 )
+			{
+					finish++;
+					*( stackdigs + finish ) = '0';
+					finish++;
+					*( stackdigs + finish ) = '.';
+					finishop++;
+					*(stackop + finishop)='-';
+			}
 			else // заносим + - ( и отделяем числа '.'
 			{
 				finishop++;
@@ -60,20 +69,6 @@ int operations(char string[])
 
 		else
 		{
-			int z = finishop;
-			while (*( stackop + z ) != '(')
-			{
-				if (*( stackop + z ) == '-' && *( stackop + z - 1 ) == '-')
-				{
-					*( stackop + z ) = '+';
-				}
-				else if (*( stackop + z ) == '+' && *( stackop + z - 1 ) == '-')
-				{
-					*( stackop + z ) = '-';
-					z--;
-				}
-				z--;
-			}
 			while (*( stackop + finishop ) != '(')
 			{
 				finish++;
@@ -139,7 +134,7 @@ int operations(char string[])
 			number = 0;
 		}
 
-		if (*( stackdigs + i ) == '+' || *( stackdigs + i ) == '/' || *( stackdigs + i ) == '*' || *( stackdigs + i ) == '-')
+		else
 		{
 			switch (*( stackdigs + i ))
 			{
